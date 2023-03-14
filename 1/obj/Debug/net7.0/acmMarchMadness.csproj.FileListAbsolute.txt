@@ -1,0 +1,15 @@
+/home/alex/Desktop/acmMarchMadness/1/bin/Debug/net7.0/acmMarchMadness
+/home/alex/Desktop/acmMarchMadness/1/bin/Debug/net7.0/acmMarchMadness.deps.json
+/home/alex/Desktop/acmMarchMadness/1/bin/Debug/net7.0/acmMarchMadness.runtimeconfig.json
+/home/alex/Desktop/acmMarchMadness/1/bin/Debug/net7.0/acmMarchMadness.dll
+/home/alex/Desktop/acmMarchMadness/1/bin/Debug/net7.0/acmMarchMadness.pdb
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.csproj.AssemblyReference.cache
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.GeneratedMSBuildEditorConfig.editorconfig
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.AssemblyInfoInputs.cache
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.AssemblyInfo.cs
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.csproj.CoreCompileInputs.cache
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.dll
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/refint/acmMarchMadness.dll
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.pdb
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/acmMarchMadness.genruntimeconfig.cache
+/home/alex/Desktop/acmMarchMadness/1/obj/Debug/net7.0/ref/acmMarchMadness.dll
