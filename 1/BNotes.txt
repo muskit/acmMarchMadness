@@ -1,0 +1,10 @@
+FORMATS
+
+%d people walked in
+%d people walked out
+
+%s and %d others arrived
+%s and %d others departed
+
+%s, %s, and, %s entered the room
+%s, %s, and, %s exited the room
