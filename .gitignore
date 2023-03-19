@@ -131,3 +131,6 @@ dmypy.json
 # C# build folders
 bin/
 obj/
+
+# vscode
+.vsocde

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 
-Prgm flights = new Dictionary<string, string>();
+var flights = new Dictionary<string, string>();
 string current, dest= null;
 int elusive = 0;
 

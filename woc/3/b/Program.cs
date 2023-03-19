@@ -1,11 +1,35 @@
 ﻿using System;
+using System.Linq;
+using MoreLinq;
 using System.Collections.Generic;
+
+class SrcTime
+{
+    public string src { get; set; }
+    public int time { get; set; }
+    public void SetTime(int newTime)
+    {
+        this.time = newTime;
+    }
+    public SrcTime(string a, int b)
+    {
+        src = a;
+        time = b;
+    }
+}
 
 public struct Flight
 {
     public string dest { get; init; }
     public TimeSpan waitDuration { get; init; }
     public TimeSpan flightDuration { get; init; }
+    public int TotalMinutes
+    {
+        get
+        {
+            return (int)TotalDuration.TotalMinutes;
+        }
+    }
     public TimeSpan TotalDuration
     {
         get
@@ -24,12 +48,14 @@ public struct Flight
 
 class Solution
 {
+    // flights and associated times; describes two nodes (start/dest) with weight (time)
     Dictionary<string, Dictionary<string, Flight>> flights = new Dictionary<string, Dictionary<string, Flight>>();
     
     // vars used in Dijkstra's
     string start;
     string end;
-    PriorityQueue<string, int> visitedNodes;
+    Dictionary<string, SrcTime> timeFromStart = new Dictionary<string, SrcTime>(); // <dest, (src, total mins)>
+    Dictionary<string, bool> visitedPlaces = new Dictionary<string, bool>();
 
     // Initialize members
     public Solution(string inputFileName)
@@ -37,11 +63,11 @@ class Solution
         string input = System.IO.File.ReadAllText(inputFileName);
         using (StringReader reader = new StringReader(input))
         {
-            start = reader.ReadLine();
-            end = reader.ReadLine();
+            start = reader.ReadLine()!;
+            end = reader.ReadLine()!;
             reader.ReadLine(); // skip line count
 
-            for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
+            for (string line = reader.ReadLine()!; line != null; line = reader.ReadLine()!)
             {
                 var words = line.Split();
                 var nSrc = words[0];
@@ -51,13 +77,17 @@ class Solution
 
                 var nFlight = new Flight(nDest, nWaitDur, nFlyDur);
 
+                // skip if wait time is longer than 3 hrs
+                if (nFlight.waitDuration > new TimeSpan(3, 0, 0))
+                    continue;
+
                 // check if depart key exists -- create if doesn't
                 if (!flights.ContainsKey(nSrc))
                     flights[nSrc] = new Dictionary<string, Flight>();
 
                 // check if destination key exists and compare flight time
                 if (flights[nSrc].ContainsKey(nDest) &&
-                    flights[nSrc][nDest].TotalDuration > nFlight.TotalDuration)
+                    nFlight.TotalDuration < flights[nSrc][nDest].TotalDuration)
                 {
                     flights[nSrc][nDest] = nFlight;
                 }
@@ -65,33 +95,80 @@ class Solution
                 // create new destination flight
                 else
                 {
-                    // Console.WriteLine($"[{nSrc} -> {nFlight.dest}] w:{nFlight.waitDuration}, f:{nFlight.flightDuration}");
                     flights[nSrc][nDest] = nFlight;
+                }
+
+                // add to timeFromStart for Dijkstra's
+                if (!timeFromStart.ContainsKey(nDest))
+                    timeFromStart[nDest] = new SrcTime("", Int32.MaxValue); //virtually infinity
+                if (!timeFromStart.ContainsKey(nSrc))
+                    timeFromStart[nSrc] = new SrcTime("", Int32.MaxValue); //virtually infinity
+            }
+        }
+        timeFromStart[start].SetTime(0);
+
+        // print out flights
+        // foreach (var k in flights.Keys)
+        // {
+        //     Console.WriteLine($"{k} ==>");
+        //     foreach (var f in flights[k].Values)
+        //     {
+        //         Console.WriteLine($"\t{f.dest} ({f.TotalDuration} or {f.TotalMinutes} minutes)");
+        //     }
+        // }
+    }
+
+    private void dijkstra(string curNode)
+    {
+        // update timeFromStart for each destNode from curNode
+        foreach (var f in flights[curNode].Values)
+        {
+            if (curNode == end || !visitedPlaces.ContainsKey(f.dest))
+            {
+                var curTime = timeFromStart[curNode].time + f.TotalMinutes;
+                if (curTime < timeFromStart[f.dest].time)
+                {
+                    var st = new SrcTime(curNode, timeFromStart[curNode].time + f.TotalMinutes);
+                    timeFromStart[f.dest] = st;
                 }
             }
         }
 
-        // print out flights
-        foreach (var k in flights.Keys)
+        visitedPlaces[curNode] = true;
+        foreach(var pair in timeFromStart.OrderBy(kv => kv.Value.time))
         {
-            Console.WriteLine($"{k} ==>");
-            foreach (var f in flights[k].Values)
+            if (!visitedPlaces.ContainsKey(pair.Key) && flights.ContainsKey(pair.Key))
             {
-                Console.WriteLine($"\t{f.dest} ({f.TotalDuration})");
+                dijkstra(pair.Key);
+                break;
             }
         }
+
     }
 
     // Find time of shortest itinerary using Dijkstra's algorithm.
-    int GetShortestMinutes(string src, string dest)
+    public int GetShortestMinutes(string start, string dest)
     {
-        
-        return -1;
+        // Populate timeFromStart (given the starting node)
+        dijkstra(start);
+
+        // backtrace flights, print flights taken and time
+        Console.WriteLine("----- BACKTRACE -----");
+        for(string curNode = dest; curNode != ""; curNode = timeFromStart[curNode].src)
+        {
+            var src = timeFromStart[curNode].src;
+            if (timeFromStart[curNode].src != "")
+            {
+                Console.WriteLine($"{src} -> {curNode}: {timeFromStart[curNode].time}");
+                Console.WriteLine($"\t{flights[src][curNode].TotalMinutes} minutes");
+            }
+        }
+        return timeFromStart[dest].time;
     }
 
     public void Run()
     {
-        Console.WriteLine(GetShortestMinutes(start, end));
+        Console.WriteLine($"Shortest flights length: {GetShortestMinutes(start, end)}");
     }
 }
 
